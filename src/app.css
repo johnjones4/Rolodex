@@ -1,0 +1,55 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.item-list-row-selectable {
+  cursor: pointer;
+  border: none;
+  background: inherit;
+  outline: none;
+  display: block;
+  font-size: inherit;
+  text-align: left;
+  margin: inherit;
+}
+
+.app-main {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.app-main .contacts-list {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.app-main .contact-detail {
+  position: absolute;
+  left: 300px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  transform: translate(100%, 0);
+}
+
+.app-main.active-contact .contacts-list {
+  width: 300px;
+}
+
+.app-main.active-contact .contact-detail {
+  transform: translate(0, 0);
+}

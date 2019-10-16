@@ -1,0 +1,27 @@
+.contacts-list {
+  overflow: scroll;
+}
+
+.contacts-list-row {
+  width: 100%;
+}
+
+.contacts-list-image {
+  width: 2em;
+  height: 2em;
+  margin: 0.5em 0;
+  display: inline-block;
+  float: left;
+  margin-right: 0.5em;
+}
+
+.contacts-list-image-placeholder {
+  background: #ccc;
+}
+
+.contacts-list-name {
+  display: inline-block;
+  margin: 1em 0;
+  height: 1em;
+  float: left;
+}

@@ -1,0 +1,24 @@
+.contact-detail {
+  padding: 1em;
+  overflow: scroll;
+}
+
+.contact-image {
+  width: 100px;
+  height: auto;
+  float: left;
+  margin: 0 1em 1em 0;
+}
+
+.contact-section {
+  padding: 10px 0;
+  clear: both;
+}
+
+.contact-section-label {
+  margin-bottom: 0.5em;
+}
+
+.contact-type {
+  margin-right: 0.5em;
+}

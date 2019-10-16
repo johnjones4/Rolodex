@@ -1,0 +1,42 @@
+.overlay-wrap {
+  z-index: 1;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  right: 40px;
+  bottom: 40px;
+}
+
+.overlay-close {
+  background: none;
+  border: none;
+  outline: none;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  font-size: 25px;
+  top: 5px;
+  right: 10px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.overlay-content {
+  z-index: 0;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  overflow: scroll;
+}

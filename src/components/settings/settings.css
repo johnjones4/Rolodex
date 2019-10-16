@@ -1,0 +1,86 @@
+.settings-title {
+  font-size: 2em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5em;
+}
+
+.settings-section {
+  font-size: 1.25em;
+  /* font-weight: bold; */
+}
+
+.settings-sources {
+  position: absolute;
+  top: 3em;
+  left: 0;
+  right: 0;
+  bottom: 3em;
+}
+
+.settings-sources-add {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.settings-sources-add button.button {
+  margin-left: 0.25em;
+  font-size: 0.7em;
+}
+
+.settings-sources-list {
+  position: absolute;
+  top: 2em;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  overflow: scroll;
+  padding: 0.5em;
+}
+
+.settings-sources-source {
+  margin: 0 0 1em 0;
+  padding: 0.5em;
+  display: flex;
+  align-items: center;
+}
+
+.settings-sources-source-info {
+  flex-grow: 1;
+  margin-right: 0.5em;
+}
+
+.settings-source-remove.button {
+  font-size: 0.6em;
+}
+
+.settings-controls {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  height: 2.5em;
+}
+
+.settings-controls button {
+  margin-left: 0.25em;
+}
+
+.form-field {
+  clear: both;
+  padding: 0.5em 0 0 0;
+}
+
+.form-field label {
+  clear: both;
+  font-size: 0.9em;
+}
+
+.form-field input {
+  clear: both;
+  width: 100%;
+  font-size: inherit;
+  margin: 0.1em 0 0 0;
+}
