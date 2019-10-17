@@ -1,6 +1,6 @@
 .contact-detail {
   padding: 1em;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 .contact-image {

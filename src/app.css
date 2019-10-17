@@ -15,7 +15,9 @@ body {
   display: block;
   font-size: inherit;
   text-align: left;
-  margin: inherit;
+  margin: 0;
+  color: inherit;
+  font-family: inherit;
 }
 
 .app-main {

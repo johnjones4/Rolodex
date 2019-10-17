@@ -3,17 +3,37 @@ import Contacts from './components/contacts/Contacts'
 import ContactDetail from './components/contactDetail/ContactDetail'
 import Settings from './components/settings/Settings'
 import './app.css'
-import './theme.css'
 const { remote, ipcRenderer } = window.require('electron')
-const { Menu } = remote
+const { Menu, dialog } = remote
+
+const defaultThemes = [
+  {
+    label: 'Standard',
+    name: 'standard'
+  },
+  {
+    label: 'Dark',
+    name: 'dark'
+  },
+  {
+    label: 'Retro',
+    name: 'retro'
+  },
+  {
+    label: 'Terminal',
+    name: 'terminal'
+  }
+]
 
 class App extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      contacts: [],
+      contacts: null,
       showingSettings: false,
-      activeContact: null
+      activeContact: null,
+      themeSource: null,
+      theme: null
     }
     ipcRenderer.on('contacts', (event, { contacts }) => {
       contacts.sort((a, b) => {
@@ -27,10 +47,18 @@ class App extends React.Component {
       })
       this.setState({contacts})
     })
+    ipcRenderer.on('setting', (event, args) => {
+      if (args && args.info) {
+        this.setActiveTheme(args.info.theme, args.info.isInternalTheme)
+      } else {
+        this.setActiveTheme('standard', true)
+      }
+    })
   }
 
   componentWillMount () {
     this.setupAppMenu()
+    ipcRenderer.send('get-setting', {key: 'theme'})
   }
 
   componentDidMount () {
@@ -39,6 +67,30 @@ class App extends React.Component {
 
   fetchContacts () {
     ipcRenderer.send('get-contacts')
+  }
+
+  async setActiveTheme (theme, isInternalTheme) {
+    if (isInternalTheme) {
+      this.setState({
+        theme
+      })
+      const themeSource = await (await fetch(`./themes/${theme}.css`)).text()
+      this.setState({
+        themeSource
+      })
+      this.setupAppMenu()
+    }
+  }
+
+  setAndSaveActiveTheme (theme, isInternalTheme) {
+    const settings = {
+      'theme': {
+        theme,
+        isInternalTheme
+      }
+    }
+    ipcRenderer.send('put-settings', {settings})
+    this.setActiveTheme(theme, isInternalTheme)
   }
 
   setupAppMenu () {
@@ -78,12 +130,30 @@ class App extends React.Component {
           { role: 'reload' },
           { role: 'forcereload' },
           { role: 'toggledevtools' },
-          { type: 'separator' },
-          { role: 'resetzoom' },
-          { role: 'zoomin' },
-          { role: 'zoomout' },
-          { type: 'separator' },
-          { role: 'togglefullscreen' }
+          { type: 'separator' },  
+          { role: 'togglefullscreen' },
+          {
+            label: 'Theme',
+            submenu: defaultThemes.map(theme => {
+              return {
+                label: theme.label,
+                type: 'checkbox',
+                checked: this.state.theme === theme.name,
+                click: () => {
+                  this.setAndSaveActiveTheme(theme.name, true)
+                }
+              }
+            }).concat([
+              { type: 'separator' },
+              {
+                label: 'Load Theme',
+                click: () => {
+                  // this.setTheme(theme.name, true)
+                  //TODO  
+                }
+              }
+            ])
+          }
         ]
       },
       {
@@ -106,15 +176,16 @@ class App extends React.Component {
   }
 
   render () {
-    return (
+    return this.state.themeSource && this.state.contacts ? (
       <div>
+        <style type='text/css'>{ this.state.themeSource }</style>
         <div className={ ['app-main', this.state.activeContact ? 'active-contact' : null].join(' ') }>
           <Contacts contacts={this.state.contacts} onContactSelected={(contact) => this.setState({ activeContact: contact })} activeContact={this.state.activeContact} />
           <ContactDetail contact={this.state.activeContact} />
         </div>
         { this.state.showingSettings && (<Settings onClose={() => this.setState({ showingSettings: false })} />) }
       </div>
-    )
+    ) : null
   }
 }
 

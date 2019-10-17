@@ -12,6 +12,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    title: 'Rolodex',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true
@@ -93,6 +94,18 @@ ipcMain.on('put-settings', async (event, arg) => {
   if (storageEngine) {
     try {
       await storageEngine.putSettings(arg.settings)
+    } catch (error) {
+      event.reply('error', error.message)
+      console.error(error)
+    }
+  }
+})
+
+ipcMain.on('get-setting', async (event, {key}) => {
+  if (storageEngine) {
+    try {
+      const setting = await storageEngine.getSetting(key)
+      event.reply('setting', setting)
     } catch (error) {
       event.reply('error', error.message)
       console.error(error)
