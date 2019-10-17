@@ -89,12 +89,17 @@ button.button {
   box-shadow: 4px 4px 0 #000;
 }
 
+button.button:active {
+  box-shadow: 2px 2px 0 #000;
+  transform: translate(2px,2px);
+}
+
 .settings-sources-list {
   border: solid 1px #ccc;
 }
 
 .settings-sources-source {
-  background: #eee;
+  border: solid 1px #ccc;
 }
 
 .settings-sources-source-name {

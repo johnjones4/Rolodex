@@ -30,7 +30,7 @@ body {
   bottom: 0;
 }
 
-.app-main .contacts-list {
+.app-main .sidebar {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -48,7 +48,7 @@ body {
   transform: translate(100%, 0);
 }
 
-.app-main.active-contact .contacts-list {
+.app-main.active-contact .sidebar {
   width: 300px;
 }
 

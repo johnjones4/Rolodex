@@ -2,6 +2,8 @@ import React from 'react'
 import Contacts from './components/contacts/Contacts'
 import ContactDetail from './components/contactDetail/ContactDetail'
 import Settings from './components/settings/Settings'
+import elasticlunr from 'elasticlunr'
+import SearchBar from './components/searchBar/SearchBar'
 import './app.css'
 const { remote, ipcRenderer } = window.require('electron')
 const { Menu, dialog } = remote
@@ -45,7 +47,26 @@ class App extends React.Component {
           return 0
         }
       })
+
+      this.index = elasticlunr(function () {
+        this.addField('body')
+        this.setRef('id')
+      })
+      contacts.forEach((contact, i) => this.index.addDoc({
+        id: i,
+        body: contact.preferences.notes
+      }))
+      
+      console.log(this.index.search("Friend"))
       this.setState({contacts})
+    })
+    ipcRenderer.on('contact', (event, { contact }) => {
+      if (contact.id === this.state.activeContact.id) {
+        this.index.addDoc(contact)
+        this.setState({
+          activeContact: contact
+        })
+      }
     })
     ipcRenderer.on('setting', (event, args) => {
       if (args && args.info) {
@@ -180,7 +201,10 @@ class App extends React.Component {
       <div>
         <style type='text/css'>{ this.state.themeSource }</style>
         <div className={ ['app-main', this.state.activeContact ? 'active-contact' : null].join(' ') }>
-          <Contacts contacts={this.state.contacts} onContactSelected={(contact) => this.setState({ activeContact: contact })} activeContact={this.state.activeContact} />
+          <div className='sidebar'>
+            <SearchBar />
+            <Contacts contacts={this.state.contacts} onContactSelected={(contact) => this.setState({ activeContact: contact })} activeContact={this.state.activeContact} />
+          </div>
           <ContactDetail contact={this.state.activeContact} />
         </div>
         { this.state.showingSettings && (<Settings onClose={() => this.setState({ showingSettings: false })} />) }

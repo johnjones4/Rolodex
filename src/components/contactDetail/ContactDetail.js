@@ -1,7 +1,7 @@
 import React from 'react'
 import './contactDetail.css'
 import { Name } from '../../util'
-const { shell } = window.require('electron')
+const { shell, ipcRenderer } = window.require('electron')
 
 const ContactDetailItem = ({key, type, keyName, valueName, keyValue, valueValue, children}) => {
   if (!children && (!valueValue || valueValue === '')) {
@@ -16,6 +16,30 @@ const ContactDetailItem = ({key, type, keyName, valueName, keyValue, valueValue,
 }
 
 class ContactDetail extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      notes: props.contact && props.contact.preferences.notes ? props.contact.preferences.notes : ''
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps (nextProps, nextState) {
+    if ((nextProps.contact && this.props.contact && nextProps.contact.id !== this.props.contact.id) || (nextProps.contact && !this.props.contact)) {
+      this.setState({
+        notes: nextProps.contact && nextProps.contact.preferences.notes ? nextProps.contact.preferences.notes : ''
+      })
+    }
+  }
+
+  saveNotes () {
+    const contact = Object.assign({}, this.props.contact, {
+      preferences: Object.assign({}, this.props.contact.preferences, {
+        notes: this.state.notes
+      })
+    })
+    ipcRenderer.send('put-contact', { contact })
+  }
+
   openURL (event) {
     event.preventDefault()
     shell.openExternal(event.target.href)
@@ -60,6 +84,12 @@ class ContactDetail extends React.Component {
             }) }
             </div>
           ) }
+
+          <div>
+            <div className='contact-section-label'>Notes</div>
+            <textarea className='notes' value={this.state.notes} onChange={event => this.setState({notes: event.target.value})}></textarea>
+            { (this.props.contact.preferences.notes ? this.props.contact.preferences.notes !== this.state.notes : this.state.notes !== '' ) && (<button className='button' onClick={() => this.saveNotes()}>Save</button>)}
+          </div>
         </div>
       </div>
     )

@@ -71,6 +71,8 @@ ipcMain.on('put-contact', async (event, arg) => {
   if (storageEngine) {
     try {
       await storageEngine.saveContact(arg.contact)
+      const contact = await storageEngine.getContact(arg.contact.id)
+      event.reply('contact', {contact})
     } catch (error) {
       event.reply('error', error.message)
       console.error(error)
