@@ -32,6 +32,7 @@ class App extends React.Component {
     super(props)
     this.state = {
       contacts: null,
+      searchResults: null,
       showingSettings: false,
       activeContact: null,
       themeSource: null,
@@ -53,16 +54,18 @@ class App extends React.Component {
         this.setRef('id')
       })
       contacts.forEach((contact, i) => this.index.addDoc({
-        id: i,
-        body: contact.preferences.notes
+        id: contact.id,
+        body: contact.preferences.notes || ''
       }))
       
-      console.log(this.index.search("Friend"))
       this.setState({contacts})
     })
     ipcRenderer.on('contact', (event, { contact }) => {
       if (contact.id === this.state.activeContact.id) {
-        this.index.addDoc(contact)
+        this.index.updateDoc({
+          id: contact.id,
+          body: contact.preferences.notes || ''
+        })
         this.setState({
           activeContact: contact
         })
@@ -196,14 +199,25 @@ class App extends React.Component {
     Menu.setApplicationMenu(menu)
   }
 
+  doSearch (term) {
+    if (term.trim() === '') {
+      this.setState({searchResults: null})
+    } else {
+      const searchResults = this.index.search(term, {}).map(({ ref }) => {
+        return this.state.contacts.find(({id}) => id+'' === ref)
+      })
+      this.setState({searchResults})
+    }
+  }
+
   render () {
-    return this.state.themeSource && this.state.contacts ? (
+    return this.state.themeSource && (this.state.contacts || this.state.searchResults) ? (
       <div>
         <style type='text/css'>{ this.state.themeSource }</style>
         <div className={ ['app-main', this.state.activeContact ? 'active-contact' : null].join(' ') }>
           <div className='sidebar'>
-            <SearchBar />
-            <Contacts contacts={this.state.contacts} onContactSelected={(contact) => this.setState({ activeContact: contact })} activeContact={this.state.activeContact} />
+            <SearchBar onSearchTermChange={term => this.doSearch(term)} />
+            <Contacts contacts={this.state.searchResults || this.state.contacts} onContactSelected={(contact) => this.setState({ activeContact: contact })} activeContact={this.state.activeContact} />
           </div>
           <ContactDetail contact={this.state.activeContact} />
         </div>
