@@ -76,9 +76,22 @@
 .form-field label {
   clear: both;
   font-size: 0.9em;
+  padding-bottom: 0.2em;
+  display: block;
 }
 
-.form-field input {
+.form-field label.checkbox-label {
+  display: inline;
+  margin-left: 1em;
+}
+
+.form-field label.checkbox-label:first-child {
+  margin-left: 0;
+}
+
+.form-field input[type=text],
+.form-field input[type=password],
+.form-field input[type=file] {
   clear: both;
   width: 100%;
   font-size: inherit;

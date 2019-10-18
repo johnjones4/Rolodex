@@ -1,5 +1,5 @@
 import React from 'react'
-
+import './searchBar.css'
 
 class SearchBar extends React.Component {
   constructor (props) {
@@ -19,7 +19,9 @@ class SearchBar extends React.Component {
   render () {
     return (
       <div className='search-bar'>
-        <input type='text' className='search-bar-field' name='search' value={this.state.searchTerm} onChange={(event) => this.updateSearchTerm(event.target.value)} />
+        <div className='search-bar-inner'>
+          <input type='text' className='search-bar-field' name='search' placeholder='Search' value={this.state.searchTerm} onChange={(event) => this.updateSearchTerm(event.target.value)} />
+        </div>
       </div>
     )
   }

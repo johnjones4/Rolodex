@@ -89,3 +89,25 @@ button.button {
 button.button.button-delete {
   background: #f22;
 }
+
+.search-bar {
+  background: #000;
+}
+
+.search-bar-inner {
+  top: 6px;
+  right: 6px;
+  left: 6px;
+  bottom: 6px;
+}
+
+.search-bar-field {
+  border-radius: 15px;
+  border: #333 solid 1px;
+  padding: 0 1em;
+}
+
+.search-bar-field:focus {
+  border-color: #28f;
+  box-shadow: 0 0 3px #28f;
+}

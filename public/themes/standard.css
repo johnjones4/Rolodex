@@ -56,7 +56,7 @@ body {
 
 .app-main .contact-detail {
   transition: all 1s;
-  border-left: solid 1px #eee;
+  border-left: solid 1px #bbb;
 }
 
 button.button {
@@ -85,4 +85,27 @@ button.button {
 
 button.button.button-delete {
   background: #f22;
+}
+
+.search-bar {
+  background: #ccc;
+}
+
+.search-bar-inner {
+  top: 6px;
+  right: 6px;
+  left: 6px;
+  bottom: 6px;
+
+}
+
+.search-bar-field {
+  border-radius: 15px;
+  border: #bbb solid 1px;
+  padding: 0 1em;
+}
+
+.search-bar-field:focus {
+  border-color: #28f;
+  box-shadow: 0 0 5px #28f;
 }

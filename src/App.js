@@ -5,6 +5,7 @@ import Settings from './components/settings/Settings'
 import elasticlunr from 'elasticlunr'
 import SearchBar from './components/searchBar/SearchBar'
 import './app.css'
+import { makeSearchObject } from './util'
 const { remote, ipcRenderer } = window.require('electron')
 const { Menu, dialog } = remote
 
@@ -40,9 +41,9 @@ class App extends React.Component {
     }
     ipcRenderer.on('contacts', (event, { contacts }) => {
       contacts.sort((a, b) => {
-        if (a.info.name.lastName < b.info.name.lastName) {
+        if (a.info.name.firstName < b.info.name.firstName) {
           return -1
-        } else if (a.info.name.lastName > b.info.name.lastName) {
+        } else if (a.info.name.firstName > b.info.name.firstName) {
           return 1
         } else {
           return 0
@@ -50,22 +51,17 @@ class App extends React.Component {
       })
 
       this.index = elasticlunr(function () {
-        this.addField('body')
+        this.addField('notes')
+        this.addField('name')
         this.setRef('id')
       })
-      contacts.forEach((contact, i) => this.index.addDoc({
-        id: contact.id,
-        body: contact.preferences.notes || ''
-      }))
+      contacts.forEach((contact, i) => this.index.addDoc(makeSearchObject(contact)))
       
       this.setState({contacts})
     })
     ipcRenderer.on('contact', (event, { contact }) => {
       if (contact.id === this.state.activeContact.id) {
-        this.index.updateDoc({
-          id: contact.id,
-          body: contact.preferences.notes || ''
-        })
+        this.index.updateDoc(makeSearchObject(contact))
         this.setState({
           activeContact: contact
         })
@@ -80,13 +76,10 @@ class App extends React.Component {
     })
   }
 
-  componentWillMount () {
-    this.setupAppMenu()
-    ipcRenderer.send('get-setting', {key: 'theme'})
-  }
-
   componentDidMount () {
     this.fetchContacts()
+    this.setupAppMenu()
+    ipcRenderer.send('get-setting', {key: 'theme'})
   }
 
   fetchContacts () {

@@ -3,12 +3,12 @@ import './contactDetail.css'
 import { Name } from '../../util'
 const { shell, ipcRenderer } = window.require('electron')
 
-const ContactDetailItem = ({key, type, keyName, valueName, keyValue, valueValue, children}) => {
+const ContactDetailItem = ({type, keyName, valueName, keyValue, valueValue, children}) => {
   if (!children && (!valueValue || valueValue === '')) {
     return null;
   }
   return (
-    <div className={ 'contact-' + type } key={key}>
+    <div className={ 'contact-' + type }>
       { keyValue && keyValue !== '' && (<span className={ 'contact-type contact-' + type + '-' + keyName }>{ keyValue }:</span>) }
       { children || (<span className={ 'contact-value contact-' + type + '-' + valueName }>{ valueValue }</span>) }
     </div>
@@ -50,7 +50,7 @@ class ContactDetail extends React.Component {
     return !this.props.contact ? (<div className='contact-detail' />) : (
       <div className='contact-detail'>
         <div className='contact-detail-inner'>
-          { this.props.contact.info.photos.length > 0 && (<img src={this.props.contact.info.photos[0]} className='contact-image' />) }
+          { this.props.contact.info.photos.length > 0 && (<img src={this.props.contact.info.photos[0]} className='contact-image' alt='Profile' />) }
 
           <div className='contact-name'><Name contact={this.props.contact} /></div>
           

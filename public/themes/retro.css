@@ -114,3 +114,12 @@ button.button.button-delete {
 a {
   color: inherit;
 }
+
+.search-bar {
+  background: #d4d3d2;
+}
+
+.search-bar-field {
+  border: #111 solid 1px;
+  padding: 0 1em;
+}

@@ -14,7 +14,6 @@ const createWindow = () => {
     height: 600,
     title: 'Rolodex',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true
     }
   })

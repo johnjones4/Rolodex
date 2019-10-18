@@ -5,6 +5,7 @@
   "main": "electron-starter.js",
   "dependencies": {
     "@getstation/electron-google-oauth2": "^1.1.2",
+    "csv-parse": "^4.6.3",
     "elasticlunr": "^0.9.5",
     "ews-javascript-api": "^0.9.6",
     "googleapis": "^44.0.0",

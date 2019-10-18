@@ -64,6 +64,10 @@ class Settings extends React.Component {
         source.username = ''
         source.password = ''
         break
+      case 'linkedin':
+        source.fileData = null
+        source.mode = 'update'
+        break
     }
     const settings = Object.assign({}, this.state.settings, {
       sources: (this.state.settings.sources || []).concat([source])
@@ -94,6 +98,12 @@ class Settings extends React.Component {
     const keyVals = {}
     keyVals[key] = value
     this.updateSourceFields(index, keyVals)
+  }
+
+  updateFile (index, key, file) {
+    const fileReader = new FileReader()
+    fileReader.onloadend = () => this.updateSourceField(index, key, fileReader.result)
+    fileReader.readAsText(file)
   }
 
   renderForm (label, type, name, value, onChange) {
@@ -132,12 +142,49 @@ class Settings extends React.Component {
     )
   }
 
+  renderLinkedInSourceMenu (source, index) {
+    const modes = [
+      {
+        value: 'all',
+        label: 'Import All'
+      },
+      {
+        value: 'update',
+        label: 'Updated Existing Contacts'
+      }
+    ]
+    return (
+      <div>
+        <div className='settings-sources-source-name'>LinkedIn</div>
+        <div className='form-field'>
+          <label>LinkedIn Export File</label>
+          <input type='file' name={'linkedin-data' + index} onChange={event => this.updateFile(index, 'fileData', event.target.files[0])} />
+        </div>
+        <div className='form-field'>
+          <label>Import Mode</label>
+          <div>
+            {
+              modes.map((mode, i) => (
+                <label className='checkbox-label' key={i}>
+                  <input type='radio' name={'linkedin-mode-' + index} value={mode.value} checked={source.mode === mode.value} onChange={(event) => event.target.checked && this.updateSourceField(index, 'mode', mode.value)} />
+                  { mode.label }
+                </label>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   renderSourceMenu (source, index) {
     switch (source.type) {
       case 'google':
         return this.renderGoogleSourceMenu(source, index)
       case 'exchange':
         return this.renderExchangeSourceMenu(source, index)
+      case 'linkedin':
+          return this.renderLinkedInSourceMenu(source, index)
       default:
         return null
     }
@@ -154,6 +201,7 @@ class Settings extends React.Component {
           <div className='settings-sources-add'>
             <button className='button' onClick={() => this.addSource('google')}>+ Google Contacts</button>
             <button className='button' onClick={() => this.addSource('exchange')}>+ Exchange</button>
+            <button className='button' onClick={() => this.addSource('linkedin')}>+ LinkedIn</button>
           </div>
           <div className='settings-sources-list'>
             {
