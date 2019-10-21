@@ -123,3 +123,7 @@ a {
   border: #111 solid 1px;
   padding: 0 1em;
 }
+
+.contact-log.item-list .contact-log-item-date {
+  font-style: italic;
+}

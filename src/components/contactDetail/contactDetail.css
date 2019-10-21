@@ -27,3 +27,44 @@
   width: 100%;
   height: 100px;
 }
+
+.contact-log-new {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contact-log-new-field {
+  margin-right: 0.5em;
+}
+
+.contact-log-new-field:last-child {
+  margin-right: 0;
+}
+
+.contact-log-new-field input,
+.contact-log-new-field select,
+.contact-preferred-contact-frequency {
+  height: 34px;
+  width: 100%;
+}
+
+.contact-log-new-field-text {
+  flex-grow: 1;
+}
+
+.contact-log-new-field input {
+  font-size: 1em;
+}
+
+.contact-log.item-list {
+  margin-top: 1em;
+}
+
+.contact-log.item-list .item-list-row {
+  padding: 0.5em;
+}
+
+.contact-log.item-list .contact-log-item-date {
+  float: right;
+}

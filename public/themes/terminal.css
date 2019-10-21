@@ -114,3 +114,7 @@ a {
   background: black;
   color: #2f2;
 }
+
+.contact-log.item-list .contact-log-item-date {
+  font-size: 0.75em;
+}

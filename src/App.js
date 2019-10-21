@@ -60,12 +60,13 @@ class App extends React.Component {
       this.setState({contacts})
     })
     ipcRenderer.on('contact', (event, { contact }) => {
+      const updates = {}
       if (contact.id === this.state.activeContact.id) {
         this.index.updateDoc(makeSearchObject(contact))
-        this.setState({
-          activeContact: contact
-        })
+        updates.activeContact = contact
       }
+      updates.contacts = this.state.contacts.map(_contact => _contact.id === contact.id ? contact : _contact)
+      this.setState(updates)
     })
     ipcRenderer.on('setting', (event, args) => {
       if (args && args.info) {

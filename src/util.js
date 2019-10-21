@@ -17,3 +17,30 @@ export const makeSearchObject = (contact) => {
     name: mergeName(contact)
   }
 }
+
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
+
+export const FREQUENCY = [
+  'Weekly',
+  'Monthly',
+  'Quarterly'
+]
+
+export const frequenciesToMilliseconds = {
+  'Weekly': 1000 * 60 * 60 * 24 * 7,
+  'Monthly': 1000 * 60 * 60 * 24 * 30,
+  'Quarterly': 1000 * 60 * 60 * 24 * 31 * 3
+} 

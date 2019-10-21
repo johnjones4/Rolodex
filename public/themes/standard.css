@@ -109,3 +109,13 @@ button.button.button-delete {
   border-color: #28f;
   box-shadow: 0 0 5px #28f;
 }
+
+.contact-log.item-list {
+  border: solid 1px #ccc;
+}
+
+.contact-log.item-list .contact-log-item-date {
+  font-style: italic;
+  color: #555;
+  font-size: 0.75em;
+}
