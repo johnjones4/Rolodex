@@ -41,7 +41,7 @@ body {
 
 .app-main .contact-detail {
   position: absolute;
-  left: 300px;
+  left: 400px;
   top: 0;
   right: 0;
   bottom: 0;
@@ -49,7 +49,7 @@ body {
 }
 
 .app-main.active-contact .sidebar {
-  width: 300px;
+  width: 400px;
 }
 
 .app-main.active-contact .contact-detail {

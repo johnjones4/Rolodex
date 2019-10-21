@@ -1,6 +1,6 @@
 import React from 'react'
 import './contactDetail.css'
-import { Name, MONTHS, FREQUENCY } from '../../util'
+import { Name, MONTHS, FREQUENCY, frequenciesToMilliseconds } from '../../util'
 const { shell, ipcRenderer } = window.require('electron')
 
 const ContactDetailItem = ({type, keyName, valueName, keyValue, valueValue, children}) => {
@@ -53,12 +53,7 @@ class ContactDetail extends React.Component {
   }
 
   commitNewLogItem () {
-    const log = (this.props.contact.preferences.log || []).map(({note, date}) => {
-      return {
-        note,
-        date: new Date(Date.parse(date))
-      }
-    })
+    const log = (this.props.contact.preferences.log || [])
     log.push({
       note: this.state.newLogItemNote,
       date: new Date(this.state.newLogItemYear, this.state.newLogItemMonth, this.state.newLogItemDate)
@@ -145,9 +140,9 @@ class ContactDetail extends React.Component {
     return (
       <div className='contact-section'>
         <div className='contact-section-label'>Preferred Contact Frequency</div>
-        <select className='contact-preferred-contact-frequency' value={this.props.contact.preferences.contactFrequency || ''} onChange={event => this.updatePreferredContactFrequency(event.target.selectedIndex === 0 ? null : FREQUENCY[event.target.selectedIndex - 1])}>
-          <option>None</option>
-          { FREQUENCY.map((freq, i) => (<option key={i}>{freq}</option>)) }
+        <select className='contact-preferred-contact-frequency' value={this.props.contact.preferences.contactFrequency || ''} onChange={event => this.updatePreferredContactFrequency(event.target.value === '' ? null : parseInt(event.target.value))}>
+          <option value=''>None</option>
+          { FREQUENCY.map((freq, i) => (<option value={frequenciesToMilliseconds[freq]} key={i}>{freq}</option>)) }
         </select>
       </div>
     )
@@ -161,18 +156,18 @@ class ContactDetail extends React.Component {
         <div className='contact-section-label'>Log</div>
         <div className='contact-log-new'>
           <div className='contact-log-new-field'>
-            <select value={MONTHS[this.state.newLogItemMonth]} onChange={event => this.setState({newLogItemMonth: event.target.selectedIndex})}>
-              { MONTHS.map((month, i) => (<option key={i}>{month}</option>)) }
+            <select value={this.state.newLogItemMonth} onChange={event => this.setState({newLogItemMonth: parseInt(event.target.value)})}>
+              { MONTHS.map((month, i) => (<option key={i} value={i}>{month}</option>)) }
             </select>
           </div>
           <div className='contact-log-new-field'>
-            <select value={this.state.newLogItemDate} onChange={event => this.setState({newLogItemDate: event.target.selectedIndex+1})}>
-              { [...Array(31).keys()].map(d => (<option key={d}>{d}</option>)) }
+            <select value={this.state.newLogItemDate} onChange={event => this.setState({newLogItemDate: parseInt(event.target.value)})}>
+              { [...Array(31).keys()].map(d => (<option value={d + 1} key={d}>{d + 1}</option>)) }
             </select>
           </div>
           <div className='contact-log-new-field'>
-            <select value={this.state.newLogItemYear} onChange={event => this.setState({newLogItemYear: years[event.target.selectedIndex]})}>
-              { years.map((y, i) => (<option key={i}>{y}</option>)) }
+            <select value={this.state.newLogItemYear} onChange={event => this.setState({newLogItemYear: parseInt(event.target.value)})}>
+              { years.map((y, i) => (<option key={i} value={y}>{y}</option>)) }
             </select>
           </div>
 
@@ -184,7 +179,7 @@ class ContactDetail extends React.Component {
             <button className='button' onClick={() => this.commitNewLogItem()}>Log</button>
           </div>
         </div>
-        { this.props.contact.preferences.log && (
+        { this.props.contact.preferences.log && this.props.contact.preferences.log.length > 0 && (
           <div className='contact-log item-list'>
             { this.props.contact.preferences.log.map((log, i) => (
               <div className='item-list-row' key={i}>

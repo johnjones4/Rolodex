@@ -5,9 +5,9 @@ import Settings from './components/settings/Settings'
 import elasticlunr from 'elasticlunr'
 import SearchBar from './components/searchBar/SearchBar'
 import './app.css'
-import { makeSearchObject } from './util'
+import { makeSearchObject, inflateContactObject, sortedContacts } from './util'
 const { remote, ipcRenderer } = window.require('electron')
-const { Menu, dialog } = remote
+const { Menu } = remote
 
 const defaultThemes = [
   {
@@ -31,6 +31,7 @@ const defaultThemes = [
 class App extends React.Component {
   constructor (props) {
     super(props)
+
     this.state = {
       contacts: null,
       searchResults: null,
@@ -39,16 +40,19 @@ class App extends React.Component {
       themeSource: null,
       theme: null
     }
-    ipcRenderer.on('contacts', (event, { contacts }) => {
-      contacts.sort((a, b) => {
-        if (a.info.name.firstName < b.info.name.firstName) {
-          return -1
-        } else if (a.info.name.firstName > b.info.name.firstName) {
-          return 1
-        } else {
-          return 0
-        }
-      })
+
+    this.setupIpcRendererListeners()
+  }
+
+  componentDidMount () {
+    this.fetchContacts()
+    this.setupAppMenu()
+    ipcRenderer.send('get-setting', {key: 'theme'})
+  }
+
+  setupIpcRendererListeners () {
+    ipcRenderer.on('contacts', (event, { contacts: _contacts }) => {
+      const contacts = sortedContacts(_contacts.map(_contact => inflateContactObject(_contact)))
 
       this.index = elasticlunr(function () {
         this.addField('notes')
@@ -59,15 +63,19 @@ class App extends React.Component {
       
       this.setState({contacts})
     })
-    ipcRenderer.on('contact', (event, { contact }) => {
+
+    ipcRenderer.on('contact', (event, { contact: _contact }) => {
+      const contact = inflateContactObject(_contact)
+
       const updates = {}
       if (contact.id === this.state.activeContact.id) {
         this.index.updateDoc(makeSearchObject(contact))
         updates.activeContact = contact
       }
-      updates.contacts = this.state.contacts.map(_contact => _contact.id === contact.id ? contact : _contact)
+      updates.contacts = sortedContacts(this.state.contacts.map(_contact => _contact.id === contact.id ? contact : _contact))
       this.setState(updates)
     })
+
     ipcRenderer.on('setting', (event, args) => {
       if (args && args.info) {
         this.setActiveTheme(args.info.theme, args.info.isInternalTheme)
@@ -75,12 +83,6 @@ class App extends React.Component {
         this.setActiveTheme('standard', true)
       }
     })
-  }
-
-  componentDidMount () {
-    this.fetchContacts()
-    this.setupAppMenu()
-    ipcRenderer.send('get-setting', {key: 'theme'})
   }
 
   fetchContacts () {
@@ -161,16 +163,7 @@ class App extends React.Component {
                   this.setAndSaveActiveTheme(theme.name, true)
                 }
               }
-            }).concat([
-              { type: 'separator' },
-              {
-                label: 'Load Theme',
-                click: () => {
-                  // this.setTheme(theme.name, true)
-                  //TODO  
-                }
-              }
-            ])
+            })
           }
         ]
       },

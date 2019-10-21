@@ -7,16 +7,17 @@
   bottom: 0;
 }
 
-.contacts-list-row {
+.contacts-list-row.item-list-row-selectable {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .contacts-list-image {
   width: 2em;
   height: 2em;
   margin: 0.5em 0;
-  display: inline-block;
-  float: left;
   margin-right: 0.5em;
 }
 
@@ -28,5 +29,22 @@
   display: inline-block;
   margin: 1em 0;
   height: 1em;
-  float: left;
+  flex-grow: 1;
+}
+
+.contacts-list-alert {
+  float: right;
+}
+
+.contacts-list-alert {
+  display: inline-block;
+  overflow: hidden;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  color: transparent;
+}
+
+.contacts-list-alert-outreach {
+  background: #B00;
 }
