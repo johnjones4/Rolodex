@@ -127,3 +127,14 @@ a {
 .contact-log.item-list .contact-log-item-date {
   font-style: italic;
 }
+
+.set-encryption-key-inner {
+  background: #f2f1f0;
+  box-shadow: 8px 8px 0 #000;
+  border: solid 1px #111;
+}
+
+.set-encryption-key-title {
+  font-size: 3em;
+  text-align: center;
+}

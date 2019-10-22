@@ -69,6 +69,7 @@ body {
   right: 0;
   bottom: 0;
   background: black;
+  border: solid 1px #2f2;
 }
 
 button.button {
@@ -117,4 +118,13 @@ a {
 
 .contact-log.item-list .contact-log-item-date {
   font-size: 0.75em;
+}
+
+.set-encryption-key-inner {
+  background: black;
+  border: solid 1px #2f2;
+}
+
+.set-encryption-key-title {
+  font-size: 2em;
 }

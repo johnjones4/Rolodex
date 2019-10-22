@@ -8,6 +8,7 @@
     "csv-parse": "^4.6.3",
     "elasticlunr": "^0.9.5",
     "ews-javascript-api": "^0.9.6",
+    "fs-extra": "^8.1.0",
     "googleapis": "^44.0.0",
     "httpntlm": "^1.7.6",
     "lodash": "^4.17.15",

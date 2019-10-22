@@ -119,3 +119,13 @@ button.button.button-delete {
   color: #555;
   font-size: 0.75em;
 }
+
+.set-encryption-key-inner {
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  border-radius: 4px;
+}
+
+.set-encryption-key-title {
+  font-size: 3em;
+  text-align: center;
+}

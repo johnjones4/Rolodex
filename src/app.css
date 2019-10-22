@@ -41,7 +41,7 @@ body {
 
 .app-main .contact-detail {
   position: absolute;
-  left: 400px;
+  left: 350px;
   top: 0;
   right: 0;
   bottom: 0;
@@ -49,9 +49,47 @@ body {
 }
 
 .app-main.active-contact .sidebar {
-  width: 400px;
+  width: 350px;
 }
 
 .app-main.active-contact .contact-detail {
   transform: translate(0, 0);
+}
+
+.set-encryption-key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.set-encryption-key-inner {
+  max-width: 500px;
+  width: 100%;
+  position: absolute;
+  padding: 1em;
+}
+
+.set-encryption-key-field {
+  padding: 0.5em 0;
+}
+
+.set-encryption-key-field label {
+  display: block;
+  clear: both;
+  padding: 0 0 0.25em 0;
+}
+
+.set-encryption-key-field-inner {
+  display: flex;
+  clear: both;
+}
+
+.set-encryption-key-field-inner input {
+  flex-grow: 1;
+}
+
+.set-encryption-key-field-help {
+  clear: both;
+  font-size: 0.75em;
+  margin-top: 0.25em;
 }
