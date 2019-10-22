@@ -4,6 +4,8 @@ const ElectronGoogleOAuth2 = require('@getstation/electron-google-oauth2').defau
 const consts = require('./consts')
 const Sync = require('./Sync')
 const Config = require('./Config')
+const path = require('path')
+const isDev = require('electron-is-dev')
 
 class App {
   constructor () {
@@ -23,8 +25,10 @@ class App {
         nodeIntegration: true
       }
     })
+    
+    const startUrl = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`
   
-    this.mainWindow.loadURL('http://localhost:3000')
+    this.mainWindow.loadURL(startUrl)
   
     this.mainWindow.on('closed', function () {
       this.mainWindow = null

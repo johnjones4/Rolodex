@@ -2,11 +2,12 @@
   "name": "rolodex",
   "version": "0.1.0",
   "private": true,
-  "main": "electron-starter.js",
+  "main": "public/electron.js",
   "dependencies": {
     "@getstation/electron-google-oauth2": "^1.1.2",
     "csv-parse": "^4.6.3",
     "elasticlunr": "^0.9.5",
+    "electron-is-dev": "^1.1.0",
     "ews-javascript-api": "^0.9.6",
     "fs-extra": "^8.1.0",
     "googleapis": "^44.0.0",
@@ -19,15 +20,37 @@
     "uuid": "^3.3.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "electron": "electron .",
-    "postinstall": "install-app-deps"
+    "postinstall": "install-app-deps",
+    "pack": "electron-builder --dir",
+    "dist": "npm run icons && npm run build && electron-builder",
+    "icons": "./make-icons.sh icon.svg public",
+    "clean": "rm -rf dist && rm -rf build"
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "devDependencies": {
+    "electron": "^6.0.12",
+    "electron-builder": "^21.2.0",
+    "iconutil": "^1.0.2"
+  },
+  "build": {
+    "appId": "com.johnjonesfour.rolodex",
+    "productName": "Rolodex",
+    "directories": {
+      "buildResources": "public"
+    },
+    "mac": {
+      "publish": {
+        "provider": "github"
+      }
+    },
+    "linux": {
+      "category": "Utility"
+    }
   },
   "browserslist": {
     "production": [
@@ -36,13 +59,7 @@
       "not op_mini all"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 chrome version"
     ]
-  },
-  "devDependencies": {
-    "electron": "^6.0.12",
-    "electron-builder": "^21.2.0"
   }
 }
