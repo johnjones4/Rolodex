@@ -25,12 +25,11 @@ const createWindow = () => {
   })
 }
 
-const initStorage = async () => {
-  storageEngine = await SQLiteStorageEngine.defaultFactory('test')
+const initStorage = async (key) => {
+  storageEngine = await SQLiteStorageEngine.defaultFactory(key)
 }
 
 app.on('ready', async () => {
-  await initStorage()
   createWindow()
 })
 
@@ -40,6 +39,16 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (mainWindow === null) createWindow()
+})
+
+ipcMain.on('set-encryption-key', async (event, { key }) => {
+  try {
+    await initStorage(key)
+    event.reply('storage-ready')
+  } catch (error) {
+    event.reply('error', error.message)
+    console.error(error)
+  }
 })
 
 ipcMain.on('get-contacts', async event => {

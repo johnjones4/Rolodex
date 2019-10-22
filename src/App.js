@@ -38,7 +38,8 @@ class App extends React.Component {
       showingSettings: false,
       activeContact: null,
       themeSource: null,
-      theme: null
+      theme: null,
+      encryptionKeySet: false
     }
 
     this.setupIpcRendererListeners()
@@ -198,19 +199,38 @@ class App extends React.Component {
   }
 
   render () {
-    return this.state.themeSource && (this.state.contacts || this.state.searchResults) ? (
-      <div>
-        <style type='text/css'>{ this.state.themeSource }</style>
-        <div className={ ['app-main', this.state.activeContact ? 'active-contact' : null].join(' ') }>
-          <div className='sidebar'>
-            <SearchBar onSearchTermChange={term => this.doSearch(term)} />
-            <Contacts contacts={this.state.searchResults || this.state.contacts} onContactSelected={(contact) => this.setState({ activeContact: contact })} activeContact={this.state.activeContact} />
+    if (!this.state.encryptionKeySet) {
+      return (
+        <div className='set-encryption-key'>
+          <div className='set-encryption-key-inner'>
+            <div className='set-encryption-key-field'>
+              <label>Folder</label>
+              <button className='button'>Choose Folder</button>
+              <input type='type' className='set-encryption-key-field' />
+            </div>
+            <div className='set-encryption-key-field'>
+              <label>Encryption Password</label>
+              <input type='password' className='set-encryption-key-field' />
+            </div>
           </div>
-          <ContactDetail contact={this.state.activeContact} />
         </div>
-        { this.state.showingSettings && (<Settings onClose={() => this.setState({ showingSettings: false })} />) }
-      </div>
-    ) : null
+      )
+    } else if (this.state.themeSource && (this.state.contacts || this.state.searchResults)) {
+      return (
+        <div>
+          <style type='text/css'>{ this.state.themeSource }</style>
+          <div className={ ['app-main', this.state.activeContact ? 'active-contact' : null].join(' ') }>
+            <div className='sidebar'>
+              <SearchBar onSearchTermChange={term => this.doSearch(term)} />
+              <Contacts contacts={this.state.searchResults || this.state.contacts} onContactSelected={(contact) => this.setState({ activeContact: contact })} activeContact={this.state.activeContact} />
+            </div>
+            <ContactDetail contact={this.state.activeContact} />
+          </div>
+          { this.state.showingSettings && (<Settings onClose={() => this.setState({ showingSettings: false })} />) }
+        </div>
+      )
+    }
+    return null
   }
 }
 
