@@ -12,4 +12,4 @@ install:
 
 script:
   # - echo $KEYS | base64 --decode > ./src/keys.json
-  - yarn run dist
+  - npm run dist
