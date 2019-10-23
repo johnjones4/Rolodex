@@ -45,20 +45,14 @@
       "buildResources": "public"
     },
     "mac": {
-      "publish": {
-        "provider": "github"
-      }
+      "publish": ["github"]
     },
-    "windows": {
-      "publish": {
-        "provider": "github"
-      }
+    "win": {
+      "publish": ["github"]
     },
     "linux": {
       "category": "Utility",
-      "publish": {
-        "provider": "github"
-      }
+      "publish": ["github"]
     }
   },
   "browserslist": {
