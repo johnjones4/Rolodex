@@ -49,8 +49,16 @@
         "provider": "github"
       }
     },
+    "windows": {
+      "publish": {
+        "provider": "github"
+      }
+    },
     "linux": {
-      "category": "Utility"
+      "category": "Utility",
+      "publish": {
+        "provider": "github"
+      }
     }
   },
   "browserslist": {
