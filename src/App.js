@@ -6,6 +6,7 @@ import elasticlunr from 'elasticlunr'
 import SearchBar from './components/searchBar/SearchBar'
 import './app.css'
 import { makeSearchObject, inflateContactObject, sortedContacts } from './util'
+const isDev = window.require('electron-is-dev')
 const { remote, ipcRenderer } = window.require('electron')
 const { Menu, dialog } = remote
 
@@ -85,7 +86,6 @@ class App extends React.Component {
     })
 
     ipcRenderer.on('setting', (event, args) => {
-      console.log(args)
       if (args && args.info) {
         this.setActiveTheme(args.info.theme, args.info.isInternalTheme)
       } else {
@@ -138,7 +138,7 @@ class App extends React.Component {
 
   setupAppMenu () {
     const menu = Menu.buildFromTemplate([
-      { role: 'appMenu' },
+      ...(remote.process.platform === 'darwin' ? [{ role: 'appMenu' }] : []),
       {
         label: 'File',
         submenu: [
@@ -170,10 +170,12 @@ class App extends React.Component {
       {
         label: 'View',
         submenu: [
-          { role: 'reload' },
-          { role: 'forcereload' },
-          { role: 'toggledevtools' },
-          { type: 'separator' },  
+          ...(isDev ? [
+            { role: 'reload' },
+            { role: 'forcereload' },
+            { role: 'toggledevtools' },
+            { type: 'separator' },  
+          ] : []),
           { role: 'togglefullscreen' },
           {
             label: 'Theme',
