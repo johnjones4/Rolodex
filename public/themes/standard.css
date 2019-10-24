@@ -129,3 +129,8 @@ button.button.button-delete {
   font-size: 3em;
   text-align: center;
 }
+
+.loader-wrapper {
+  padding: 0.25em;
+  background: white;
+}

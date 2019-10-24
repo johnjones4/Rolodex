@@ -42,7 +42,8 @@ class App extends React.Component {
       theme: null,
       storageDirectory: ipcRenderer.sendSync('get-storage-dir'),
       encryptionKey: '',
-      encryptionKeySet: ipcRenderer.sendSync('storage-is-ready')
+      encryptionKeySet: ipcRenderer.sendSync('storage-is-ready'),
+      spinner: false
     }
 
     this.setupIpcRendererListeners()
@@ -57,6 +58,7 @@ class App extends React.Component {
 
   setupIpcRendererListeners () {
     ipcRenderer.on('contacts', (event, { contacts: _contacts }) => {
+      this.setState({spinner: false})
       if (_contacts.length === 0) {
         this.setState({showingSettings: true})
       } else {
@@ -145,11 +147,12 @@ class App extends React.Component {
           {
             label: 'Sync',
             click: () => {
+              this.setState({spinner: true})
               ipcRenderer.send('sync')
             }
           },
           {
-            label: 'Settings',
+            label: 'Data Sources',
             click: () => {
               this.setState({ showingSettings: true })
             }
@@ -302,6 +305,9 @@ class App extends React.Component {
         <style type='text/css'>{ this.state.themeSource }</style>
         { this.renderPerMode() }
         { this.state.showingSettings && (<Settings onClose={() => this.setState({ showingSettings: false })} />) }
+        { this.state.spinner && (<div className='loader-wrapper'>
+          <div className="loader">Loading...</div>
+        </div>) }
       </div>
     ) 
   }
