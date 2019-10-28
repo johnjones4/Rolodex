@@ -16,7 +16,7 @@ class Config {
   }
 
   async writeConfig () {
-    await fs.writeJSON(this.config)
+    await fs.writeJSON(this.path, this.config)
   }
 
   getStorageDir () {

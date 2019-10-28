@@ -6,6 +6,7 @@ import elasticlunr from 'elasticlunr'
 import SearchBar from './components/searchBar/SearchBar'
 import './app.css'
 import { makeSearchObject, inflateContactObject, sortedContacts } from './util'
+const isDev = window.require('electron-is-dev')
 const { remote, ipcRenderer } = window.require('electron')
 const { Menu, dialog } = remote
 
@@ -41,7 +42,8 @@ class App extends React.Component {
       theme: null,
       storageDirectory: ipcRenderer.sendSync('get-storage-dir'),
       encryptionKey: '',
-      encryptionKeySet: ipcRenderer.sendSync('storage-is-ready')
+      encryptionKeySet: ipcRenderer.sendSync('storage-is-ready'),
+      spinner: false
     }
 
     this.setupIpcRendererListeners()
@@ -56,6 +58,7 @@ class App extends React.Component {
 
   setupIpcRendererListeners () {
     ipcRenderer.on('contacts', (event, { contacts: _contacts }) => {
+      this.setState({spinner: false})
       if (_contacts.length === 0) {
         this.setState({showingSettings: true})
       } else {
@@ -85,7 +88,6 @@ class App extends React.Component {
     })
 
     ipcRenderer.on('setting', (event, args) => {
-      console.log(args)
       if (args && args.info) {
         this.setActiveTheme(args.info.theme, args.info.isInternalTheme)
       } else {
@@ -138,18 +140,19 @@ class App extends React.Component {
 
   setupAppMenu () {
     const menu = Menu.buildFromTemplate([
-      { role: 'appMenu' },
+      ...(remote.process.platform === 'darwin' ? [{ role: 'appMenu' }] : []),
       {
         label: 'File',
         submenu: [
           {
             label: 'Sync',
             click: () => {
+              this.setState({spinner: true})
               ipcRenderer.send('sync')
             }
           },
           {
-            label: 'Settings',
+            label: 'Data Sources',
             click: () => {
               this.setState({ showingSettings: true })
             }
@@ -170,10 +173,12 @@ class App extends React.Component {
       {
         label: 'View',
         submenu: [
-          { role: 'reload' },
-          { role: 'forcereload' },
-          { role: 'toggledevtools' },
-          { type: 'separator' },  
+          ...(isDev ? [
+            { role: 'reload' },
+            { role: 'forcereload' },
+            { role: 'toggledevtools' },
+            { type: 'separator' },  
+          ] : []),
           { role: 'togglefullscreen' },
           {
             label: 'Theme',
@@ -300,6 +305,9 @@ class App extends React.Component {
         <style type='text/css'>{ this.state.themeSource }</style>
         { this.renderPerMode() }
         { this.state.showingSettings && (<Settings onClose={() => this.setState({ showingSettings: false })} />) }
+        { this.state.spinner && (<div className='loader-wrapper'>
+          <div className="loader">Loading...</div>
+        </div>) }
       </div>
     ) 
   }

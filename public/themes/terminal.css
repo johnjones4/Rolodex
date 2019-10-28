@@ -128,3 +128,8 @@ a {
 .set-encryption-key-title {
   font-size: 2em;
 }
+
+.loader-wrapper {
+  padding: 0.25em;
+  background: white;
+}

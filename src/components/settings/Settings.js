@@ -193,9 +193,6 @@ class Settings extends React.Component {
   renderSourcesMenu () {
     return (
       <Overlay onClose={this.props.onClose}>
-        <div className='settings-title'>
-          Settings
-        </div>
         <div className='settings-sources'>
           <div className='settings-section'>Sources</div>
           <div className='settings-sources-add'>
