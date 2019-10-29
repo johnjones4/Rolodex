@@ -24,34 +24,29 @@ class LinkedInContactsSource extends Source {
 
     return parsed.map(contact => {
       return {
-        sources: [
-          this.getSourceKey()
-        ],
-        info: {
-          name: {
-            prefix: null,
-            firstName: contact['First Name'], 
-            middleName: null,
-            lastName: contact['Last Name'],
-            suffix: null,
-          },
-          photos: [],
-          addresses: [],
-          emails: contact['Email Address'] !== '' ? [
-            {
-              key: null,
-              value: contact['Email Address']
-            }
-          ] : [],
-          phones: [],
-          urls: [],
-          jobs: contact['Company'] !== '' ? [
-            {
-              organization: contact['Company'],
-              title: contact['Position']
-            }
-          ] : []
-        }
+        name: {
+          prefix: null,
+          firstName: contact['First Name'], 
+          middleName: null,
+          lastName: contact['Last Name'],
+          suffix: null,
+        },
+        photos: [],
+        addresses: [],
+        emails: contact['Email Address'] !== '' ? [
+          {
+            key: null,
+            value: contact['Email Address']
+          }
+        ] : [],
+        phones: [],
+        urls: [],
+        jobs: contact['Company'] !== '' ? [
+          {
+            organization: contact['Company'],
+            title: contact['Position']
+          }
+        ] : []
       }
     })
   }

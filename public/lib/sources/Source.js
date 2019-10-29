@@ -1,5 +1,6 @@
 const uuidv1 = require('uuid/v1')
 const _ = require('lodash')
+const { mergeContactInfo } = require('../util')
 
 class Source {
   constructor (storageEngine, config) {
@@ -34,51 +35,61 @@ class Source {
 
   async execute () {
     console.log('Syncing')
-    const fetchedContacts = await this.fetch()
+    const fetchedInfo = await this.fetch()
     const currentContacts = await this.storageEngine.getContacts()
     const dirtyContactIndicies = []
-    const saveContacts = []
     const newContacts = []
+    const removeContacts = []
 
-    fetchedContacts.forEach(contact => {
-      const index = this.findExistingContactIndex(contact, currentContacts)
+    fetchedInfo.forEach(info => {
+      const index = this.findExistingContactIndex(info, currentContacts)
       if (index >= 0) {
         dirtyContactIndicies.push(index)
-        const oldContact = JSON.stringify(currentContacts[index])
-        const updatedContact = this.mergeContacts(currentContacts[index], contact)
-        if (oldContact !== JSON.stringify(updatedContact)) {
-          saveContacts.push(updatedContact)
-        }
+        currentContacts[index].sources[this.getSourceKey()] = info
       } else if (this.sourceMode() === 'all') {
-        const newIndex = this.findExistingContactIndex(contact, newContacts)
-        if (newIndex >= 0) {
-          saveContacts[newIndex] = this.mergeContacts(newContacts[newIndex], contact)
+        const newIndex = this.findExistingContactIndex(info, newContacts)
+        if (newIndex >= 0 && newContacts[newIndex].sources[this.getSourceKey()]) {
+          newContacts[newIndex].sources[this.getSourceKey()] = mergeContactInfo([info, newContacts[newIndex].sources[this.getSourceKey()]])
         } else {
-          saveContacts.push(contact)
-          newContacts.push(contact)
+          const newContact = {
+            info: {},
+            sources: {},
+            preferences: {}
+          }
+          newContact[this.getSourceKey()] = info
+          newContacts.push(newContact)
         }
       }
     })
 
-    const contactsNotUpdated = currentContacts.filter((contact, index) => {
-      return contact.sources.length === 1 && contact.sources[0] === this.getSourceKey() && dirtyContactIndicies.indexOf(index) < 0;
+    currentContacts.forEach((contact, index) => {
+      if (dirtyContactIndicies.indexOf(index) < 0) {
+        const sources = _.keys(contact.sources)
+        if (sources.length === 1 && sources[0] === this.getSourceKey()) {
+          delete currentContacts[index].sources[this.getSourceKey()]
+          dirtyContactIndicies.push(index)
+        }
+        if (_.keys(currentContacts[index].sources).length === 0) {
+          removeContacts.push(contact)
+        }
+      }
     })
 
-    await Promise.all(saveContacts.map(async contact => {
-      await this.storageEngine.saveContact(contact)
+    await Promise.all(dirtyContactIndicies.map(async index => {
+      await this.storageEngine.saveContact(currentContacts[index])
     }))
 
-    await Promise.all(contactsNotUpdated.map(async contact => {
+    await Promise.all(removeContacts.map(async contact => {
       await this.storageEngine.removeContact(contact)
     }))
 
     console.log('Done Syncing')
   }
 
-  findExistingContactIndex (contact, contacts) {
+  findExistingContactIndex (info, contacts) {
     return contacts.findIndex(_contact => {
       const foundEmail = _contact.info.emails.findIndex(row => {
-        return contact.info.emails.findIndex(_row => {
+        return info.emails.findIndex(_row => {
           return row.value === _row.value
         }) >= 0
       }) >= 0
@@ -87,9 +98,9 @@ class Source {
       }
 
       const foundPhone = _contact.info.phones.findIndex(row => {
-        return contact.info.phones.findIndex(_row => {
+        return info.phones.findIndex(_row => {
           return row.value === _row.value
-        }) >= 0 && _contact.info.name.firstName === contact.info.name.firstName && _contact.info.name.lastName === contact.info.name.lastName
+        }) >= 0 && _contact.info.name.firstName === info.name.firstName && _contact.info.name.lastName === info.name.lastName
       }) >= 0
       if (foundPhone) {
         return true 
@@ -99,28 +110,7 @@ class Source {
     })
   }
 
-  mergeContacts (contact1, contact2) {
-    return {
-      id: contact1.id || contact2.id,
-      info: {
-        name: {
-          prefix: contact1.info.name.prefix || contact2.info.name.prefix,
-          firstName: contact1.info.name.firstName || contact2.info.name.firstName,
-          middleName: contact1.info.name.middleName || contact2.info.name.middleName,
-          lastName: contact1.info.name.lastName || contact2.info.name.lastName,
-          suffix: contact1.info.name.suffix || contact2.info.name.suffix,
-        },
-        photos: _.uniq(contact1.info.photos.concat(contact2.info.photos)),
-        addresses: _.uniq(contact1.info.addresses.concat(contact2.info.addresses)),
-        emails: _.uniqBy(contact1.info.emails.concat(contact2.info.emails), ({value}) => value),
-        phones: _.uniqBy(contact1.info.phones.concat(contact2.info.phones), ({value}) => value),
-        urls: _.uniqBy(contact1.info.urls.concat(contact2.info.urls), ({value}) => value),
-        jobs: _.uniqBy(contact1.info.jobs.concat(contact2.info.jobs), ({organization}) => organization),
-      },
-      sources: _.uniq(contact1.sources.concat(contact2.sources)),
-      preferences: Object.assign({}, contact1.preferences, contact2.preferences)
-    }
-  }
+  
 }
 
 module.exports = Source

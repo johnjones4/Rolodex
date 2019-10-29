@@ -58,44 +58,39 @@ class GoogleContactsSource extends Source {
     })
     return response.data.connections.map(contact => {
       return {
-        sources: [
-          this.getSourceKey()
-        ],
-        info: {
-          name: {
-            prefix: contact.names && contact.names.length > 0 && contact.names[0].honorificPrefix !== '' ? contact.names[0].honorificPrefix : null,
-            firstName: contact.names && contact.names.length > 0 && contact.names[0].givenName !== '' ? contact.names[0].givenName : null, 
-            middleName: contact.names && contact.names.length > 0 && contact.names[0].middleName !== '' ? contact.names[0].middleName : null,
-            lastName: contact.names && contact.names.length > 0 && contact.names[0].familyName !== '' ? contact.names[0].familyName : null,
-            suffix: contact.names && contact.names.length > 0 && contact.names[0].honorificSuffix !== '' ? contact.names[0].honorificSuffix : null,
-          },
-          photos: contact.photos ? contact.photos.map(photo => photo.url) : [],
-          addresses: contact.addresses ? contact.addresses.map(address => address.formattedValue) : [],
-          emails: contact.emailAddresses ? contact.emailAddresses.map(emailAddress => {
-            return {
-              type: emailAddress.formattedType,
-              value: emailAddress.value
-            }
-          }) : [],
-          phones: contact.phoneNumbers ? contact.phoneNumbers.map(phoneNumber => {
-            return {
-              type: phoneNumber.formattedType,
-              value: phoneNumber.value
-            }
-          }) : [],
-          urls: contact.urls ? contact.urls.map(url => {
-            return {
-              type: url.formattedType,
-              value: url.value
-            }
-          }) : [],
-          jobs: contact.organizations ? contact.organizations.map(organization => {
-            return {
-              organization: organization.name,
-              title: organization.title || null
-            }
-          }) : []
-        }
+        name: {
+          prefix: contact.names && contact.names.length > 0 && contact.names[0].honorificPrefix !== '' ? contact.names[0].honorificPrefix : null,
+          firstName: contact.names && contact.names.length > 0 && contact.names[0].givenName !== '' ? contact.names[0].givenName : null, 
+          middleName: contact.names && contact.names.length > 0 && contact.names[0].middleName !== '' ? contact.names[0].middleName : null,
+          lastName: contact.names && contact.names.length > 0 && contact.names[0].familyName !== '' ? contact.names[0].familyName : null,
+          suffix: contact.names && contact.names.length > 0 && contact.names[0].honorificSuffix !== '' ? contact.names[0].honorificSuffix : null,
+        },
+        photos: contact.photos ? contact.photos.map(photo => photo.url) : [],
+        addresses: contact.addresses ? contact.addresses.map(address => address.formattedValue) : [],
+        emails: contact.emailAddresses ? contact.emailAddresses.map(emailAddress => {
+          return {
+            type: emailAddress.formattedType,
+            value: emailAddress.value
+          }
+        }) : [],
+        phones: contact.phoneNumbers ? contact.phoneNumbers.map(phoneNumber => {
+          return {
+            type: phoneNumber.formattedType,
+            value: phoneNumber.value
+          }
+        }) : [],
+        urls: contact.urls ? contact.urls.map(url => {
+          return {
+            type: url.formattedType,
+            value: url.value
+          }
+        }) : [],
+        jobs: contact.organizations ? contact.organizations.map(organization => {
+          return {
+            organization: organization.name,
+            title: organization.title || null
+          }
+        }) : []
       }
     })
   }
