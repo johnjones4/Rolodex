@@ -39,20 +39,13 @@ class Source {
     const currentContacts = await this.storageEngine.getContacts()
     const dirtyContactIndicies = []
     const newContacts = []
-    const removeContacts = []
 
     fetchedInfo.forEach(info => {
       const index = this.findExistingContactIndex(info, currentContacts)
       if (index >= 0) {
         currentContacts[index].sources[this.getSourceKey()] = info
         currentContacts[index].info = mergeContactInfo(_.values(currentContacts[index].sources))
-        if (currentContacts[index].info.emails.length === 0 && currentContacts[index].info.phones.length === 0) {
-          if (this.sourceMode() === 'all') {
-            removeContacts.push(currentContacts[index])
-          }
-        } else {
-          dirtyContactIndicies.push(index)
-        }
+        dirtyContactIndicies.push(index)
       } else if (this.sourceMode() === 'all') {
         const newIndex = this.findExistingContactIndex(info, newContacts)
         if (newIndex >= 0 && newContacts[newIndex].sources[this.getSourceKey()]) {
@@ -85,8 +78,6 @@ class Source {
       }
     })
 
-    const cleanNewContacts = newContacts.filter(contact => contact.info.emails.length > 0 || contact.info.phones.length > 0)
-
     currentContacts.forEach((contact, index) => {
       if (dirtyContactIndicies.indexOf(index) < 0) {
         const sources = _.keys(contact.sources)
@@ -94,25 +85,27 @@ class Source {
           delete currentContacts[index].sources[this.getSourceKey()]
           currentContacts[index].info = mergeContactInfo(_.values(currentContacts[index].sources))
           dirtyContactIndicies.push(index)
-        } else if (sources.length === 1 && sources[0] === this.getSourceKey()) {
-          removeContacts.push(contact)
         }
       }
     })
 
-    console.log('Create: ' + cleanNewContacts.length)
-    console.log('Update: ' + dirtyContactIndicies.length)
-    console.log('Destroy: ' + removeContacts.length)
+    const finalNewContacts = newContacts.filter(contact => contact.info.emails.length > 0 || contact.info.phones.length > 0)
+    const finalRemoveContacts = currentContacts.filter(contact => contact.info.emails.length === 0 && contact.info.phones.length === 0)
+    const finalUpdateContacts = dirtyContactIndicies.map(index => currentContacts[index]).filter(contact => contact.info.emails.length > 0 || contact.info.phones.length > 0)
 
-    await Promise.all(dirtyContactIndicies.map(async index => {
-      await this.storageEngine.saveContact(currentContacts[index])
+    console.log('Create: ' + finalNewContacts.length)
+    console.log('Update: ' + finalUpdateContacts.length)
+    console.log('Destroy: ' + finalRemoveContacts.length)
+
+    await Promise.all(finalUpdateContacts.map(async contact => {
+      await this.storageEngine.saveContact(contact)
     }))
 
-    await Promise.all(removeContacts.map(async contact => {
+    await Promise.all(finalRemoveContacts.map(async contact => {
       await this.storageEngine.removeContact(contact)
     }))
 
-    await Promise.all(cleanNewContacts.map(async contact => {
+    await Promise.all(finalNewContacts.map(async contact => {
       await this.storageEngine.saveContact(contact)
     }))
 
