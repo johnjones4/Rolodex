@@ -13,7 +13,6 @@ class Settings extends React.Component {
     }
 
     this.settingsHandler = (event, arg) => {
-      console.log(arg)
       this.setState({
         settings: Object.assign({}, this.state.settings, arg.settings)
       })

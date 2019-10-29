@@ -108,6 +108,7 @@ class App extends React.Component {
     this.fetchContacts()
     this.setupAppMenu()
     ipcRenderer.send('get-setting', {key: 'theme'})
+    this.sync()
   }
 
   fetchContacts () {
@@ -138,6 +139,11 @@ class App extends React.Component {
     this.setActiveTheme(theme, isInternalTheme)
   }
 
+  sync () {
+    this.setState({spinner: true})
+    ipcRenderer.send('sync')
+  }
+
   setupAppMenu () {
     const menu = Menu.buildFromTemplate([
       ...(remote.process.platform === 'darwin' ? [{ role: 'appMenu' }] : []),
@@ -145,16 +151,31 @@ class App extends React.Component {
         label: 'File',
         submenu: [
           {
-            label: 'Sync',
+            label: 'Sync Contacts',
+            enabled: this.encryptionKeySet ? true : null,
             click: () => {
-              this.setState({spinner: true})
-              ipcRenderer.send('sync')
+              this.sync()
             }
           },
           {
             label: 'Data Sources',
+            enabled: this.encryptionKeySet ? true : null,
             click: () => {
               this.setState({ showingSettings: true })
+            }
+          },
+          { type: 'separator' },
+          {
+            label: 'Pick Storage Folder',
+            enabled: this.encryptionKeySet ? true : null,
+            click: () => {
+              this.setState({
+                encryptionKeySet: false,
+                encryptionKey: '',
+                storageDirectory: ipcRenderer.sendSync('get-storage-dir'),
+                contacts: [],
+                showingSettings: false
+              })
             }
           }
         ]
