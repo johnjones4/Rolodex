@@ -100,8 +100,6 @@ class Source {
       }
     })
 
-    removeContacts.forEach(c => console.log(c.info))
-
     console.log('Create: ' + cleanNewContacts.length)
     console.log('Update: ' + dirtyContactIndicies.length)
     console.log('Destroy: ' + removeContacts.length)
@@ -135,7 +133,7 @@ class Source {
       const foundPhone = _contact.info.phones.findIndex(row => {
         return info.phones.findIndex(_row => {
           return row.value === _row.value
-        }) >= 0 && _contact.info.name.firstName === info.name.firstName && _contact.info.name.lastName === info.name.lastName
+        }) >= 0
       }) >= 0
       if (foundPhone) {
         return true 
