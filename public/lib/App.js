@@ -30,7 +30,7 @@ class App {
   
     this.mainWindow.loadURL(startUrl)
   
-    this.mainWindow.on('closed', function () {
+    this.mainWindow.on('closed', () => {
       this.mainWindow = null
     })
   }

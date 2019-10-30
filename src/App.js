@@ -33,6 +33,8 @@ class App extends React.Component {
   constructor (props) {
     super(props)
 
+    this.startUpSyncHasRun = false
+
     this.state = {
       contacts: null,
       searchResults: null,
@@ -108,7 +110,10 @@ class App extends React.Component {
     this.fetchContacts()
     this.setupAppMenu()
     ipcRenderer.send('get-setting', {key: 'theme'})
-    this.sync()
+    if (!this.startUpSyncHasRun) {
+      this.startUpSyncHasRun = true
+      this.sync()
+    }
   }
 
   fetchContacts () {
